@@ -26,7 +26,8 @@ export default {
 				foreground: 'hsl(var(--foreground))',
 				primary: {
 					DEFAULT: 'hsl(var(--primary))',
-					foreground: 'hsl(var(--primary-foreground))'
+					foreground: 'hsl(var(--primary-foreground))',
+					glow: 'hsl(var(--primary-glow))'
 				},
 				secondary: {
 					DEFAULT: 'hsl(var(--secondary))',
@@ -51,6 +52,27 @@ export default {
 				card: {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
+				},
+				success: {
+					DEFAULT: 'hsl(var(--success))',
+					foreground: 'hsl(var(--success-foreground))'
+				},
+				warning: {
+					DEFAULT: 'hsl(var(--warning))',
+					foreground: 'hsl(var(--warning-foreground))'
+				},
+				gauge: {
+					bg: 'hsl(var(--gauge-bg))',
+					track: 'hsl(var(--gauge-track))',
+					fill: 'hsl(var(--gauge-fill))',
+					danger: 'hsl(var(--gauge-danger))',
+					warning: 'hsl(var(--gauge-warning))',
+					success: 'hsl(var(--gauge-success))'
+				},
+				temp: {
+					cold: 'hsl(var(--temp-cold))',
+					warm: 'hsl(var(--temp-warm))',
+					hot: 'hsl(var(--temp-hot))'
 				},
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',
