@@ -21,6 +21,30 @@ const Index = () => {
   const [activeMenu, setActiveMenu] = useState<string>('dashboard');
   const [pressureValue, setPressureValue] = useState<number>(125.7);
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
+  const [gaugeUnit, setGaugeUnit] = useState<string>('kPa');
+  const [gaugeDisplayValue, setGaugeDisplayValue] = useState<number>(125.7);
+
+  // 单位转换系数
+  const conversionFactors = {
+    kPa: 1,
+    bar: 0.01,
+    psi: 0.145038,
+    mmHg: 7.50062,
+    inH2O: 4.01463,
+    'kgf/cm2': 0.0101972
+  };
+
+  // 处理单位换算器的单位切换
+  const handleUnitChange = (unit: string, value: number) => {
+    setGaugeUnit(unit);
+    setGaugeDisplayValue(value);
+  };
+
+  // 根据当前单位转换压力值
+  const convertPressureValue = (value: number, targetUnit: string) => {
+    const kPaValue = value; // 基础值是kPa
+    return kPaValue * (conversionFactors[targetUnit as keyof typeof conversionFactors] || 1);
+  };
 
   // 模拟实时压力数据更新
   useEffect(() => {
@@ -30,10 +54,17 @@ const Index = () => {
       const variation = Math.sin(Date.now() * 0.001) * 15 + Math.random() * 10 - 5;
       const newValue = Math.max(0, baseValue + variation);
       setPressureValue(parseFloat(newValue.toFixed(1)));
+      
+      // 更新显示值
+      if (gaugeUnit !== 'kPa') {
+        setGaugeDisplayValue(convertPressureValue(newValue, gaugeUnit));
+      } else {
+        setGaugeDisplayValue(newValue);
+      }
     }, 3000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [gaugeUnit]);
 
   const menuItems = [
     { id: 'dashboard', label: '仪表盘', icon: Home },
@@ -59,9 +90,10 @@ const Index = () => {
                     <PressureGauge
                       value={pressureValue}
                       max={200}
-                      unit="kPa"
+                      unit={gaugeUnit}
                       label="主压力传感器"
                       size={280}
+                      displayValue={gaugeDisplayValue}
                     />
                     <div className="flex-1 space-y-4">
                       <div className="grid grid-cols-2 gap-4">
@@ -92,7 +124,7 @@ const Index = () => {
             {/* 右侧状态和换算区域 */}
             <div className="space-y-6">
               <StatusPanel />
-              <UnitConverter />
+              <UnitConverter onUnitChange={handleUnitChange} />
             </div>
           </div>
         );
@@ -117,7 +149,7 @@ const Index = () => {
       case 'converter':
         return (
           <div className="max-w-2xl mx-auto">
-            <UnitConverter />
+            <UnitConverter onUnitChange={handleUnitChange} />
           </div>
         );
       case 'status':

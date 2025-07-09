@@ -6,6 +6,7 @@ interface PressureGaugeProps {
   unit: string;
   label: string;
   size?: number;
+  displayValue?: number; // 用于显示换算后的值
 }
 
 export const PressureGauge: React.FC<PressureGaugeProps> = ({
@@ -13,7 +14,8 @@ export const PressureGauge: React.FC<PressureGaugeProps> = ({
   max,
   unit,
   label,
-  size = 200
+  size = 200,
+  displayValue
 }) => {
   const percentage = Math.min((value / max) * 100, 100);
   const angle = (percentage / 100) * 270 - 135; // 270度范围，从-135度开始
@@ -72,8 +74,8 @@ export const PressureGauge: React.FC<PressureGaugeProps> = ({
 
         {/* 中心数值显示 */}
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <div className="text-3xl font-bold text-foreground mb-1">
-            {value.toFixed(1)}
+          <div className="text-3xl font-bold text-foreground mb-1 transition-all duration-500">
+            {displayValue ? displayValue.toFixed(1) : value.toFixed(1)}
           </div>
           <div className="text-sm text-muted-foreground font-medium">
             {unit}
