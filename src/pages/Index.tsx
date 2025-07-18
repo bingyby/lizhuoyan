@@ -33,9 +33,11 @@ const Index = () => {
   };
 
   // 处理单位换算器的单位切换
-  const handleUnitChange = (unit: string, value: number) => {
+  const handleUnitChange = (unit: string) => {
     setGaugeUnit(unit);
-    setGaugeDisplayValue(value);
+    // 根据新单位重新计算显示值
+    const newDisplayValue = convertPressureValue(pressureValue, unit);
+    setGaugeDisplayValue(newDisplayValue);
   };
 
   // 根据当前单位转换压力值
@@ -95,7 +97,7 @@ const Index = () => {
                       <div className="text-3xl font-bold text-primary mb-2">
                         {gaugeDisplayValue.toFixed(1)} {gaugeUnit}
                       </div>
-                      <UnitConverter onUnitChange={handleUnitChange} />
+                      <UnitConverter currentUnit={gaugeUnit} onUnitChange={handleUnitChange} />
                     </div>
                   </div>
                 </CardContent>
@@ -136,7 +138,7 @@ const Index = () => {
               <CardContent className="p-8">
                 <div className="text-center space-y-6">
                   <h2 className="text-2xl font-bold text-primary">单位换算工具</h2>
-                  <UnitConverter onUnitChange={handleUnitChange} />
+                  <UnitConverter currentUnit={gaugeUnit} onUnitChange={handleUnitChange} />
                 </div>
               </CardContent>
             </Card>
