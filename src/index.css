@@ -19,17 +19,17 @@
     --popover-foreground: 213 31% 12%;
 
     /* 主色调 - 工业蓝 */
-    --primary: 213 94% 50%;
+    --primary: 213 94% 45%;
     --primary-foreground: 0 0% 100%;
-    --primary-glow: 213 94% 65%;
+    --primary-glow: 213 94% 60%;
 
     /* 次要色调 */
-    --secondary: 213 32% 91%;
-    --secondary-foreground: 213 31% 12%;
+    --secondary: 213 32% 88%;
+    --secondary-foreground: 213 31% 15%;
 
     /* 静音色调 */
-    --muted: 213 32% 91%;
-    --muted-foreground: 213 15% 45%;
+    --muted: 213 32% 88%;
+    --muted-foreground: 213 15% 35%;
 
     /* 强调色 - 传感器橙 */
     --accent: 25 95% 53%;
@@ -112,17 +112,17 @@
     --popover-foreground: 210 40% 98%;
 
     /* 主色调 */
-    --primary: 213 94% 60%;
-    --primary-foreground: 213 31% 8%;
-    --primary-glow: 213 94% 75%;
+    --primary: 213 94% 65%;
+    --primary-foreground: 213 31% 5%;
+    --primary-glow: 213 94% 80%;
 
     /* 次要色调 */
-    --secondary: 213 32% 15%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 213 32% 18%;
+    --secondary-foreground: 210 40% 95%;
 
     /* 静音色调 */
-    --muted: 213 32% 15%;
-    --muted-foreground: 213 15% 65%;
+    --muted: 213 32% 18%;
+    --muted-foreground: 213 15% 70%;
 
     /* 强调色 */
     --accent: 25 95% 58%;

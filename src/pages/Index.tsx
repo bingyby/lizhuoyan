@@ -5,10 +5,8 @@ import { TemperatureChart } from '@/components/TemperatureChart';
 import { StatusPanel } from '@/components/StatusPanel';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { 
-  Settings, 
   Menu, 
   Gauge, 
-  BarChart3, 
   Thermometer,
   Calculator,
   Activity,
@@ -71,9 +69,7 @@ const Index = () => {
     { id: 'gauge', label: '压力监控', icon: Gauge },
     { id: 'temperature', label: '温度监控', icon: Thermometer },
     { id: 'converter', label: '单位换算', icon: Calculator },
-    { id: 'analytics', label: '数据分析', icon: BarChart3 },
     { id: 'status', label: '系统状态', icon: Activity },
-    { id: 'settings', label: '系统设置', icon: Settings },
   ];
 
   const renderMainContent = () => {
@@ -86,32 +82,20 @@ const Index = () => {
               {/* 主要压力仪表 */}
               <Card className="shadow-[var(--shadow-card)] border-border">
                 <CardContent className="p-6">
-                  <div className="flex flex-col lg:flex-row gap-6 items-center">
+                  <div className="flex flex-col items-center space-y-6">
                     <PressureGauge
                       value={pressureValue}
                       max={200}
                       unit={gaugeUnit}
                       label="主压力传感器"
-                      size={280}
+                      size={350}
                       displayValue={gaugeDisplayValue}
                     />
-                    <div className="flex-1 space-y-4">
-                      <div className="grid grid-cols-2 gap-4">
-                        <PressureGauge
-                          value={pressureValue * 0.8}
-                          max={160}
-                          unit="kPa"
-                          label="备用传感器 1"
-                          size={150}
-                        />
-                        <PressureGauge
-                          value={pressureValue * 1.1}
-                          max={220}
-                          unit="kPa"
-                          label="备用传感器 2"
-                          size={150}
-                        />
+                    <div className="text-center">
+                      <div className="text-3xl font-bold text-primary mb-2">
+                        {gaugeDisplayValue.toFixed(1)} {gaugeUnit}
                       </div>
+                      <UnitConverter onUnitChange={handleUnitChange} />
                     </div>
                   </div>
                 </CardContent>
@@ -121,10 +105,9 @@ const Index = () => {
               <TemperatureChart />
             </div>
 
-            {/* 右侧状态和换算区域 */}
+            {/* 右侧状态区域 */}
             <div className="space-y-6">
               <StatusPanel />
-              <UnitConverter onUnitChange={handleUnitChange} />
             </div>
           </div>
         );
@@ -135,7 +118,7 @@ const Index = () => {
               value={pressureValue}
               max={200}
               unit="kPa"
-              label="李卓妍压力传感器3000"
+              label="麦当劳小组压力传感器3000"
               size={350}
             />
           </div>
@@ -148,8 +131,15 @@ const Index = () => {
         );
       case 'converter':
         return (
-          <div className="max-w-2xl mx-auto">
-            <UnitConverter onUnitChange={handleUnitChange} />
+          <div className="max-w-4xl mx-auto">
+            <Card className="shadow-[var(--shadow-card)] border-border">
+              <CardContent className="p-8">
+                <div className="text-center space-y-6">
+                  <h2 className="text-2xl font-bold text-primary">单位换算工具</h2>
+                  <UnitConverter onUnitChange={handleUnitChange} />
+                </div>
+              </CardContent>
+            </Card>
           </div>
         );
       case 'status':
@@ -184,11 +174,11 @@ const Index = () => {
               onClick={() => setSidebarOpen(!sidebarOpen)}
               className="lg:hidden"
             >
-              <Menu className="w-5 h-5" />
+              <Menu className="w-6 h-6" />
             </Button>
             <div>
               <h1 className="text-xl font-bold text-primary">
-                李卓妍压力传感器3000
+                麦当劳小组压力传感器3000
               </h1>
               <p className="text-xs text-muted-foreground hidden sm:block">
                 Industrial Pressure Monitoring System
@@ -232,7 +222,7 @@ const Index = () => {
                   `}
                   onClick={() => setActiveMenu(item.id)}
                 >
-                  <Icon className="w-4 h-4 flex-shrink-0" />
+                  <Icon className="w-5 h-5 flex-shrink-0" />
                   <span className={`${sidebarOpen ? '' : 'lg:hidden'}`}>
                     {item.label}
                   </span>

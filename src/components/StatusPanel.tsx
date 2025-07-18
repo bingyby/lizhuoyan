@@ -179,26 +179,6 @@ export const StatusPanel: React.FC = () => {
           </span>
         </div>
 
-        {/* 性能指标 */}
-        <div className="space-y-3">
-          <h4 className="text-sm font-medium text-muted-foreground">性能指标</h4>
-          <div className="grid grid-cols-2 gap-3">
-            <div className="text-center p-3 bg-muted/30 rounded-lg">
-              <div className="flex items-center justify-center gap-1 mb-1">
-                <Zap className="w-3 h-3 text-accent" />
-                <span className="text-xs text-muted-foreground">响应时间</span>
-              </div>
-              <div className="text-sm font-semibold text-accent">12ms</div>
-            </div>
-            <div className="text-center p-3 bg-muted/30 rounded-lg">
-              <div className="flex items-center justify-center gap-1 mb-1">
-                <Shield className="w-3 h-3 text-success" />
-                <span className="text-xs text-muted-foreground">稳定性</span>
-              </div>
-              <div className="text-sm font-semibold text-success">99.8%</div>
-            </div>
-          </div>
-        </div>
 
         {/* 系统警报 */}
         <div className="space-y-3">
