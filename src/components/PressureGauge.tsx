@@ -18,7 +18,7 @@ export const PressureGauge: React.FC<PressureGaugeProps> = ({
   displayValue
 }) => {
   const percentage = Math.min((value / max) * 100, 100);
-  const angle = (percentage / 100) * 270 - 135; // 270度范围，从-135度开始
+  const angle = (percentage / 100) * 270 + 45; // 270度范围，从45度开始（0在最下面）
   
   const getGaugeColor = () => {
     if (percentage > 90) return 'hsl(var(--gauge-danger))';
@@ -39,7 +39,7 @@ export const PressureGauge: React.FC<PressureGaugeProps> = ({
       >
         {/* 背景圆弧 */}
         <svg
-          className="absolute inset-2 transform -rotate-45"
+          className="absolute inset-2 transform rotate-45"
           width={size - 16}
           height={size - 16}
           viewBox={`0 0 ${size - 16} ${size - 16}`}
@@ -84,7 +84,7 @@ export const PressureGauge: React.FC<PressureGaugeProps> = ({
 
         {/* 刻度标记 */}
         {Array.from({ length: 6 }, (_, i) => {
-          const tickAngle = -135 + (i * 54); // 270度分成5段
+          const tickAngle = 45 + (i * 54); // 270度分成5段，从45度开始
           const tickValue = (max / 5) * i;
           const radian = (tickAngle * Math.PI) / 180;
           const x = (size / 2) + (radius - 15) * Math.cos(radian);
@@ -100,7 +100,7 @@ export const PressureGauge: React.FC<PressureGaugeProps> = ({
                 transform: 'translate(-50%, -50%)'
               }}
             >
-              {tickValue.toFixed(0)}
+              {displayValue ? ((max / 5) * i * (displayValue / value)).toFixed(0) : tickValue.toFixed(0)}
             </div>
           );
         })}
@@ -132,7 +132,7 @@ export const PressureGauge: React.FC<PressureGaugeProps> = ({
       <div className="mt-4 text-center">
         <div className="text-lg font-semibold text-foreground">{label}</div>
         <div className="text-sm text-muted-foreground">
-          最大值: {max} {unit}
+          最大值: {displayValue ? (max * (displayValue / value)).toFixed(0) : max} {unit}
         </div>
       </div>
     </div>
