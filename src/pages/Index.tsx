@@ -43,14 +43,14 @@ const Index = () => {
   // 根据当前单位获取合适的最大值
   const getMaxValueForUnit = (unit: string) => {
     const maxValues = {
-      kPa: 200,
-      bar: 2,
-      psi: 30,
-      mmHg: 1500,
-      inH2O: 800,
-      'kgf/cm2': 2
+      kPa: 600,
+      bar: 6,
+      psi: 87,
+      mmHg: 4500,
+      inH2O: 2400,
+      'kgf/cm2': 6
     };
-    return maxValues[unit as keyof typeof maxValues] || 200;
+    return maxValues[unit as keyof typeof maxValues] || 600;
   };
 
   // 根据当前单位转换压力值
