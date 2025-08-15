@@ -40,19 +40,6 @@ const Index = () => {
     setGaugeDisplayValue(newDisplayValue);
   };
 
-  // 根据当前单位获取合适的最大值
-  const getMaxValueForUnit = (unit: string) => {
-    const maxValues = {
-      kPa: 600,
-      bar: 6,
-      psi: 87,
-      mmHg: 4500,
-      inH2O: 2400,
-      'kgf/cm2': 6
-    };
-    return maxValues[unit as keyof typeof maxValues] || 600;
-  };
-
   // 根据当前单位转换压力值
   const convertPressureValue = (value: number, targetUnit: string) => {
     const kPaValue = value; // 基础值是kPa
@@ -100,7 +87,7 @@ const Index = () => {
                   <div className="flex flex-col items-center space-y-6">
                     <PressureGauge
                       value={pressureValue}
-                      max={getMaxValueForUnit(gaugeUnit)}
+                      max={200}
                       unit={gaugeUnit}
                       label="主压力传感器"
                       size={350}
@@ -131,7 +118,7 @@ const Index = () => {
           <div className="flex items-center justify-center h-full">
             <PressureGauge
               value={pressureValue}
-              max={getMaxValueForUnit('kPa')}
+              max={200}
               unit="kPa"
               label="麦当劳小组压力传感器3000"
               size={350}
