@@ -4,6 +4,7 @@ import { UnitConverter } from '@/components/UnitConverter';
 import { TemperatureChart } from '@/components/TemperatureChart';
 import { StatusPanel } from '@/components/StatusPanel';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { useWebSocket } from '@/hooks/useWebSocket';
 import { 
   Menu, 
   Gauge, 
@@ -17,10 +18,15 @@ import { Card, CardContent } from '@/components/ui/card';
 
 const Index = () => {
   const [activeMenu, setActiveMenu] = useState<string>('dashboard');
-  const [pressureValue, setPressureValue] = useState<number>(125.7);
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
   const [gaugeUnit, setGaugeUnit] = useState<string>('kPa');
-  const [gaugeDisplayValue, setGaugeDisplayValue] = useState<number>(125.7);
+  
+  // WebSocket数据连接
+  const { pressureData, temperatureData, connectionStatus, lastUpdate } = useWebSocket();
+  
+  // 从WebSocket数据中获取压力值，如果没有数据则显示0
+  const pressureValue = pressureData?.value || 0;
+  const gaugeDisplayValue = pressureValue;
 
   // 单位转换系数
   const conversionFactors = {
@@ -35,22 +41,19 @@ const Index = () => {
   // 处理单位换算器的单位切换
   const handleUnitChange = (unit: string) => {
     setGaugeUnit(unit);
-    // 根据新单位重新计算显示值
-    const newDisplayValue = convertPressureValue(pressureValue, unit);
-    setGaugeDisplayValue(newDisplayValue);
   };
 
-  // 根据当前单位获取合适的最大值
+  // 根据当前单位获取合适的最大值 - 固定为600kPa量程
   const getMaxValueForUnit = (unit: string) => {
     const maxValues = {
-      kPa: 200,
-      bar: 2,
-      psi: 30,
-      mmHg: 1500,
-      inH2O: 800,
-      'kgf/cm2': 2
+      kPa: 600,
+      bar: 6,
+      psi: 87,
+      mmHg: 4500,
+      inH2O: 2400,
+      'kgf/cm2': 6
     };
-    return maxValues[unit as keyof typeof maxValues] || 200;
+    return maxValues[unit as keyof typeof maxValues] || 600;
   };
 
   // 根据当前单位转换压力值
@@ -59,25 +62,13 @@ const Index = () => {
     return kPaValue * (conversionFactors[targetUnit as keyof typeof conversionFactors] || 1);
   };
 
-  // 模拟实时压力数据更新
-  useEffect(() => {
-    const interval = setInterval(() => {
-      // 生成模拟压力数据，基础值125kPa，加上一些随机波动
-      const baseValue = 125;
-      const variation = Math.sin(Date.now() * 0.001) * 15 + Math.random() * 10 - 5;
-      const newValue = Math.max(0, baseValue + variation);
-      setPressureValue(parseFloat(newValue.toFixed(1)));
-      
-      // 更新显示值
-      if (gaugeUnit !== 'kPa') {
-        setGaugeDisplayValue(convertPressureValue(newValue, gaugeUnit));
-      } else {
-        setGaugeDisplayValue(newValue);
-      }
-    }, 3000);
-
-    return () => clearInterval(interval);
-  }, [gaugeUnit]);
+  // 获取当前单位的显示值
+  const getCurrentDisplayValue = () => {
+    if (gaugeUnit === 'kPa') {
+      return pressureValue;
+    }
+    return convertPressureValue(pressureValue, gaugeUnit);
+  };
 
   const menuItems = [
     { id: 'dashboard', label: '仪表盘', icon: Home },
@@ -108,7 +99,7 @@ const Index = () => {
                     />
                     <div className="text-center">
                       <div className="text-3xl font-bold text-primary mb-2">
-                        {gaugeDisplayValue.toFixed(1)} {gaugeUnit}
+                        {getCurrentDisplayValue().toFixed(1)} {gaugeUnit}
                       </div>
                       <UnitConverter currentUnit={gaugeUnit} onUnitChange={handleUnitChange} />
                     </div>
@@ -117,7 +108,7 @@ const Index = () => {
               </Card>
 
               {/* 温度监控 */}
-              <TemperatureChart />
+              <TemperatureChart temperatureData={temperatureData} />
             </div>
 
             {/* 右侧状态区域 */}
@@ -141,7 +132,7 @@ const Index = () => {
       case 'temperature':
         return (
           <div className="max-w-4xl mx-auto">
-            <TemperatureChart />
+            <TemperatureChart temperatureData={temperatureData} />
           </div>
         );
       case 'converter':
@@ -204,9 +195,13 @@ const Index = () => {
           {/* 右侧实时数据和主题切换 */}
           <div className="flex items-center gap-4">
             <div className="hidden md:flex items-center gap-3 px-3 py-2 bg-primary/10 rounded-lg border border-primary/20">
-              <div className="w-2 h-2 bg-success rounded-full animate-pulse" />
+              <div className={`w-2 h-2 rounded-full ${
+                connectionStatus === 'connected' ? 'bg-success animate-pulse' :
+                connectionStatus === 'connecting' ? 'bg-warning animate-bounce' :
+                'bg-destructive'
+              }`} />
               <span className="text-sm font-medium text-primary">
-                {pressureValue} kPa
+                {pressureValue.toFixed(1)} kPa
               </span>
             </div>
             <ThemeToggle />

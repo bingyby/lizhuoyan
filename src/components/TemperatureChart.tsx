@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Thermometer, TrendingUp } from 'lucide-react';
+import { SensorData } from '@/hooks/useWebSocket';
 
 interface TemperatureData {
   time: string;
@@ -9,73 +10,61 @@ interface TemperatureData {
   timestamp: number;
 }
 
-export const TemperatureChart: React.FC = () => {
+interface TemperatureChartProps {
+  temperatureData?: SensorData | null;
+}
+
+export const TemperatureChart: React.FC<TemperatureChartProps> = ({ temperatureData }) => {
   const [data, setData] = useState<TemperatureData[]>([]);
-  const [currentTemp, setCurrentTemp] = useState<number>(23.5);
+  const [currentTemp, setCurrentTemp] = useState<number>(0);
 
-  // 模拟实时温度数据
+  // 处理WebSocket温度数据
   useEffect(() => {
-    const generateInitialData = () => {
-      const now = Date.now();
-      const initialData: TemperatureData[] = [];
-      
-      for (let i = 29; i >= 0; i--) {
-        const timestamp = now - (i * 2000); // 每2秒一个数据点
-        const time = new Date(timestamp).toLocaleTimeString('zh-CN', { 
-          hour12: false,
-          hour: '2-digit',
-          minute: '2-digit',
-          second: '2-digit'
-        });
-        
-        // 生成模拟温度数据，基础温度23度，加上一些随机波动
-        const baseTemp = 23;
-        const variation = Math.sin(i * 0.1) * 2 + Math.random() * 1.5 - 0.75;
-        const temperature = baseTemp + variation;
-        
-        initialData.push({
-          time,
-          temperature: parseFloat(temperature.toFixed(1)),
-          timestamp
-        });
-      }
-      
-      setData(initialData);
-      setCurrentTemp(initialData[initialData.length - 1].temperature);
-    };
-
-    generateInitialData();
-
-    // 每2秒更新一次数据
-    const interval = setInterval(() => {
-      const now = Date.now();
-      const time = new Date(now).toLocaleTimeString('zh-CN', { 
+    if (temperatureData) {
+      const now = new Date();
+      const timeString = now.toLocaleTimeString('zh-CN', { 
         hour12: false,
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit'
+        hour: '2-digit', 
+        minute: '2-digit', 
+        second: '2-digit' 
       });
       
-      // 生成新的温度值
-      const baseTemp = 23;
-      const variation = Math.sin(now * 0.001) * 2 + Math.random() * 1.5 - 0.75;
-      const newTemp = parseFloat((baseTemp + variation).toFixed(1));
-      
+      const newTemp = parseFloat(temperatureData.value.toFixed(1));
       setCurrentTemp(newTemp);
       
       setData(prevData => {
         const newData = [...prevData, {
-          time,
+          time: timeString,
           temperature: newTemp,
-          timestamp: now
+          timestamp: now.getTime()
         }];
         
-        // 保持最近30个数据点
+        // 只保留最近30个数据点
         return newData.slice(-30);
       });
-    }, 2000);
+    }
+  }, [temperatureData]);
 
-    return () => clearInterval(interval);
+  // 生成初始数据（如果没有WebSocket数据）
+  useEffect(() => {
+    if (data.length === 0) {
+      // 生成初始历史数据（最近30个数据点）
+      const initialData = [];
+      for (let i = 29; i >= 0; i--) {
+        const time = new Date(Date.now() - i * 2000);
+        initialData.push({
+          time: time.toLocaleTimeString('zh-CN', { 
+            hour12: false,
+            hour: '2-digit', 
+            minute: '2-digit', 
+            second: '2-digit' 
+          }),
+          temperature: 0, // 没有数据时显示0
+          timestamp: time.getTime()
+        });
+      }
+      setData(initialData);
+    }
   }, []);
 
   const getTemperatureColor = (temp: number) => {
